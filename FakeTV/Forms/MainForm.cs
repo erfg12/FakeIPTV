@@ -59,7 +59,8 @@ namespace FakeTV
 
             int StreamPort = Convert.ToInt32(StartingPortBox.Text);
 
-            XMLTVData += "<tv source-info-url=\"http://www.schedulesdirect.org/\" source-info-name=\"Schedules Direct\" generator-info-name=\"XMLTV/$Id: tv_grab_na_dd.in,v 1.70 2008/03/03 15:21:41 rmeden Exp $\" generator-info-url=\"http://www.xmltv.org/\">";
+            XMLTVData += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                "<tv generator-info-name=\"WebGrab+Plus/w MDB &amp; REX Postprocess -- version V2.1.9 -- Jan van Straaten\" generator-info-url=\"http://www.MarvelIPTV.com\">";
             foreach (ListViewItem item in ChannelListView.Items)
             {
                 string ChanName = item.SubItems[0].Text;
@@ -74,7 +75,7 @@ namespace FakeTV
                 iptv_lines.Add("http://127.0.0.1:" + StreamPort);
 
                 // append to XMLTV file
-                XMLTVData += "<channel id=\"" + item.Index.ToString() + "\">" +
+                XMLTVData += "<channel id=\"" + ChanName + "\">" +
                     "<display-name>" + ChanName + @"</display-name>" +
                     "<icon src=\"" + ChanLogo + "\" />" +
                     "</channel>";
@@ -184,16 +185,10 @@ namespace FakeTV
                         DateTime dt2 = DateTime.Now;
                         dt2 += ts;
 
-                        XMLTVShowData += "<programme start=\"" + String.Format("{0:yyyyMMddHHmmss}", dt) + " -0500\" stop=\"" + String.Format("{0:yyyyMMddHHmmss}", dt2) + " -0500\" channel=\"" + item.Index.ToString() + "\">" +
+                        XMLTVShowData += "<programme start=\"" + String.Format("{0:yyyyMMddHHmmss}", dt) + " -0400\" stop=\"" + String.Format("{0:yyyyMMddHHmmss}", dt2) + " -0400\" channel=\"" + ChanName + "\">" +
                             "<title lang=\"en\">" + WebUtility.HtmlEncode(node.Attributes["title"].Value) + "</title>" +
                             "<desc lang=\"en\">" + WebUtility.HtmlEncode(node.Attributes["summary"].Value) + "</desc>" +
-                            "<date>" + String.Format("{0:yyyyMMdd}", dt) + "</date>" +
                             "<category lang=\"en\">" + ChanName + "</category>" +
-                            "<audio>" +
-                            "<stereo>stereo</stereo>" +
-                            "</audio>" +
-                            "<previously-shown start = \"\" />" +
-                            "<subtitles type = \"teletext\" />" +
                             "</programme>";
 
                         dt += ts;
