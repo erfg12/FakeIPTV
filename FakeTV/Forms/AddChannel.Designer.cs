@@ -85,9 +85,30 @@
             this.GenreBox.FormattingEnabled = true;
             this.GenreBox.Items.AddRange(new object[] {
             "Any",
-            "Action",
-            "Comedy",
-            "Drama"});
+            "Action ",
+            "Adventure ",
+            "Animation ",
+            "Biography ",
+            "Comedy ",
+            "Crime ",
+            "Documentary ",
+            "Drama ",
+            "Family ",
+            "Fantasy ",
+            "Film Noir ",
+            "History ",
+            "Horror ",
+            "Music ",
+            "Musical ",
+            "Mystery ",
+            "Romance ",
+            "Sci-Fi ",
+            "Short Film ",
+            "Sport ",
+            "Superhero ",
+            "Thriller ",
+            "War ",
+            "Western"});
             this.GenreBox.Location = new System.Drawing.Point(18, 64);
             this.GenreBox.Name = "GenreBox";
             this.GenreBox.Size = new System.Drawing.Size(232, 21);
@@ -121,8 +142,8 @@
             this.TypeBox.FormattingEnabled = true;
             this.TypeBox.Items.AddRange(new object[] {
             "Both",
-            "TVShows",
-            "Movies"});
+            "movie",
+            "show"});
             this.TypeBox.Location = new System.Drawing.Point(18, 104);
             this.TypeBox.Name = "TypeBox";
             this.TypeBox.Size = new System.Drawing.Size(104, 21);

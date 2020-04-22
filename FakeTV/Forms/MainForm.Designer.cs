@@ -39,6 +39,8 @@
             this.BrowseVLCExe = new System.Windows.Forms.Button();
             this.GetVLCDialog = new System.Windows.Forms.OpenFileDialog();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.HowToBtn = new System.Windows.Forms.Button();
+            this.VisitPlex = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.StartingPortBox = new System.Windows.Forms.TextBox();
             this.HideVLC = new System.Windows.Forms.CheckBox();
@@ -53,8 +55,6 @@
             this.NewOrOld = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Filters = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.CheckChannelsDirWatcher = new System.IO.FileSystemWatcher();
-            this.VisitPlex = new System.Windows.Forms.Button();
-            this.HowToBtn = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CheckChannelsDirWatcher)).BeginInit();
@@ -178,6 +178,28 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Settings";
             // 
+            // HowToBtn
+            // 
+            this.HowToBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.HowToBtn.Location = new System.Drawing.Point(442, 42);
+            this.HowToBtn.Name = "HowToBtn";
+            this.HowToBtn.Size = new System.Drawing.Size(67, 23);
+            this.HowToBtn.TabIndex = 14;
+            this.HowToBtn.Text = "How To";
+            this.HowToBtn.UseVisualStyleBackColor = true;
+            this.HowToBtn.Click += new System.EventHandler(this.HowToBtn_Click);
+            // 
+            // VisitPlex
+            // 
+            this.VisitPlex.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.VisitPlex.Location = new System.Drawing.Point(442, 16);
+            this.VisitPlex.Name = "VisitPlex";
+            this.VisitPlex.Size = new System.Drawing.Size(67, 23);
+            this.VisitPlex.TabIndex = 13;
+            this.VisitPlex.Text = "Visit Plex";
+            this.VisitPlex.UseVisualStyleBackColor = true;
+            this.VisitPlex.Click += new System.EventHandler(this.VisitPlex_Click);
+            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -292,7 +314,7 @@
             // 
             // Filters
             // 
-            this.Filters.Text = "Filters";
+            this.Filters.Text = "Regex Title Filters";
             this.Filters.Width = 210;
             // 
             // CheckChannelsDirWatcher
@@ -303,28 +325,6 @@
             this.CheckChannelsDirWatcher.Path = "channels";
             this.CheckChannelsDirWatcher.SynchronizingObject = this;
             this.CheckChannelsDirWatcher.Changed += new System.IO.FileSystemEventHandler(this.CheckChannelsDirWatcher_Changed);
-            // 
-            // VisitPlex
-            // 
-            this.VisitPlex.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.VisitPlex.Location = new System.Drawing.Point(442, 16);
-            this.VisitPlex.Name = "VisitPlex";
-            this.VisitPlex.Size = new System.Drawing.Size(67, 23);
-            this.VisitPlex.TabIndex = 13;
-            this.VisitPlex.Text = "Visit Plex";
-            this.VisitPlex.UseVisualStyleBackColor = true;
-            this.VisitPlex.Click += new System.EventHandler(this.VisitPlex_Click);
-            // 
-            // HowToBtn
-            // 
-            this.HowToBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.HowToBtn.Location = new System.Drawing.Point(442, 42);
-            this.HowToBtn.Name = "HowToBtn";
-            this.HowToBtn.Size = new System.Drawing.Size(67, 23);
-            this.HowToBtn.TabIndex = 14;
-            this.HowToBtn.Text = "How To";
-            this.HowToBtn.UseVisualStyleBackColor = true;
-            this.HowToBtn.Click += new System.EventHandler(this.HowToBtn_Click);
             // 
             // FakeTV
             // 

@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
@@ -25,7 +26,7 @@ namespace FakeTV
 
         Functions fun = new Functions();
         string XMLTVData = "";
-        string XMLTVShowData = "";
+        Dictionary<string,string> XMLVideoData = new Dictionary<string,string>();
 
         private void BrowseVLCExe_Click(object sender, EventArgs e)
         {
@@ -50,6 +51,10 @@ namespace FakeTV
                 fun.KillVLC();
                 StartServerBtn.Text = "START FAKE TV STREAMS";
                 StartServerBtn.ForeColor = Color.ForestGreen;
+                //File.Delete("XMLTV.xml");
+                //File.Delete("iptv.m3u");
+                XMLTVData = "";
+                XMLVideoData.Clear();
                 return;
             }
 
@@ -71,7 +76,7 @@ namespace FakeTV
                 string ChanFilters = item.SubItems[5].Text;
 
                 // add to IP TV m3u
-                iptv_lines.Add("#EXTINF:-1 tvg-id=\"\" tvg-name=\"" + ChanName + "\" tvg-language=\"English\" tvg-logo=\"" + ChanLogo + "\" tvg-country=\"US\" tvg-url=\"\" group-title=\"" + ChanGenre + "\"");
+                iptv_lines.Add("#EXTINF:-1 tvg-id=\"\" tvg-name=\"" + ChanName + "\" tvg-language=\"English\" tvg-logo=\"" + ChanLogo + "\" tvg-country=\"US\" tvg-url=\"\" group-title=\"" + ChanGenre + "\"," + ChanName);
                 iptv_lines.Add("http://127.0.0.1:" + StreamPort);
 
                 // append to XMLTV file
@@ -98,7 +103,11 @@ namespace FakeTV
             File.WriteAllLines(@"iptv.m3u", iptv_lines);
 
             XmlDocument xdoc = new XmlDocument();
-            string XMLInfo = XMLTVData + XMLTVShowData + "</tv>";
+            string XMLInfo = XMLTVData;
+            foreach(KeyValuePair<string, string> kvp in XMLVideoData) {
+                XMLInfo += kvp.Value;
+            }
+            XMLInfo += "</tv>";
             //File.WriteAllText(@"debug.txt", XMLInfo); // DEBUG
             xdoc.LoadXml(XMLInfo);
             xdoc.Save("XMLTV.xml");
@@ -153,6 +162,12 @@ namespace FakeTV
                 string ChanAge = item.SubItems[4].Text;
                 string ChanFilters = item.SubItems[5].Text;
 
+                // store XML nodes in these variables so we can shuffle them later
+                List<string> VideoFiles = new List<string>();
+                Dictionary<string, string> Titles = new Dictionary<string, string>();
+                Dictionary<string, string> Summaries = new Dictionary<string, string>();
+                Dictionary<string, int> Durations = new Dictionary<string, int>();
+
                 DateTime dt = DateTime.Now;
 
                 // parse our media XML files
@@ -165,11 +180,11 @@ namespace FakeTV
                     XmlDocument xmlDoc = new XmlDocument();
                     xmlDoc.Load(file.FullName);
                     XmlNodeList nodeList = xmlDoc.DocumentElement.SelectNodes("/MediaContainer/Video");
-                    List<string> VideoFiles = new List<string>();
                     foreach (XmlNode node in nodeList)
                     {
                         bool FoundGenre = false;
                         bool FoundType = false;
+                        bool FilterFound = false;
                         foreach (XmlNode GNode in node.SelectNodes("Genre"))
                         {
                             if (GNode.Attributes["tag"].Value.Equals(ChanGenre) || ChanGenre.Equals("Any"))
@@ -178,23 +193,40 @@ namespace FakeTV
                         if (node.Attributes["type"].Value.Equals(ChanType) || ChanType.Equals("Both"))
                             FoundType = true;
 
-                        if (FoundType && FoundGenre)
-                            VideoFiles.Add(node.SelectSingleNode("Media/Part").Attributes["file"].Value);
+                        if (!ChanFilters.Equals(""))
+                        {
+                            Regex rx = new Regex(ChanFilters, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                            if (rx.Match(WebUtility.HtmlEncode(node.Attributes["title"].Value)).Success)
+                                FilterFound = true;
+                        }
 
-                        TimeSpan ts = new TimeSpan(0, 0, Convert.ToInt32(node.Attributes["duration"].Value) / 1000);
-                        DateTime dt2 = DateTime.Now;
-                        dt2 += ts;
-
-                        XMLTVShowData += "<programme start=\"" + String.Format("{0:yyyyMMddHHmmss}", dt) + " -0400\" stop=\"" + String.Format("{0:yyyyMMddHHmmss}", dt2) + " -0400\" channel=\"" + ChanName + "\">" +
-                            "<title lang=\"en\">" + WebUtility.HtmlEncode(node.Attributes["title"].Value) + "</title>" +
-                            "<desc lang=\"en\">" + WebUtility.HtmlEncode(node.Attributes["summary"].Value) + "</desc>" +
-                            "<category lang=\"en\">" + ChanName + "</category>" +
-                            "</programme>";
-
-                        dt += ts;
+                        if (FoundType && FoundGenre && (!ChanFilters.Equals("") && FilterFound))
+                        {
+                            string VideoPath = node.SelectSingleNode("Media/Part").Attributes["file"].Value;
+                            VideoFiles.Add(VideoPath);
+                            Durations[VideoPath] = Convert.ToInt32(node.Attributes["duration"].Value);
+                            Titles[VideoPath] = WebUtility.HtmlEncode(node.Attributes["title"].Value);
+                            Summaries[VideoPath] = WebUtility.HtmlEncode(node.Attributes["title"].Value);
+                        }
                     }
-                    File.WriteAllLines(@"playlists/" + ChanName + ".m3u", VideoFiles);
                 }
+
+                // shuffle the videos around to prevent videos with the same genre from playing all on the same channels
+                foreach (string vf in fun.Shuffle(VideoFiles))
+                {
+                    TimeSpan ts = new TimeSpan(0, 0, Durations[vf] / 1000);
+                    DateTime dt2 = dt;
+                    dt2 += ts;
+
+                    XMLVideoData[vf] = "<programme start=\"" + String.Format("{0:yyyyMMddHHmmss}", dt) + " -0400\" stop=\"" + String.Format("{0:yyyyMMddHHmmss}", dt2) + " -0400\" channel=\"" + ChanName + "\">" +
+                        "<title lang=\"en\">" + Titles[vf] + "</title>" +
+                        "<desc lang=\"en\">" + Summaries[vf] + "</desc>" +
+                        "<category lang=\"en\">" + ChanName + "</category>" +
+                        "</programme>";
+
+                    dt += ts;
+                }
+                File.WriteAllLines(@"playlists/" + ChanName + ".m3u", XMLVideoData.Keys);
             }
         }
 
@@ -224,6 +256,7 @@ namespace FakeTV
             Properties.Settings.Default.StartPort = StartingPortBox.Text;
             Properties.Settings.Default.VLCexe = VLCPathBox.Text;
             Properties.Settings.Default.Save();
+            fun.KillVLC();
         }
 
         private void VisitPlex_Click(object sender, EventArgs e)
