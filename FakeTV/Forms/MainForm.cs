@@ -19,10 +19,13 @@ namespace FakeTV
     {
         public FakeTV()
         {
+            fun.CreateDirs();
             InitializeComponent();
         }
 
         Functions fun = new Functions();
+        string XMLTVData = "";
+        string XMLTVShowData = "";
 
         private void BrowseVLCExe_Click(object sender, EventArgs e)
         {
@@ -35,6 +38,13 @@ namespace FakeTV
 
         private void StartServerBtn_Click(object sender, EventArgs e)
         {
+            if (!fun.GrabPlexLibrary(PlexIP.Text, PlexPort.Text, PlexToken.Text))
+            {
+                MessageBox.Show("ERROR: No access to Plex's library!");
+            }
+
+            GenerateM3uChannels();
+
             if (StartServerBtn.Text.Equals("STOP FAKE TV STREAMS"))
             {
                 fun.KillVLC();
@@ -49,6 +59,7 @@ namespace FakeTV
 
             int StreamPort = Convert.ToInt32(StartingPortBox.Text);
 
+            XMLTVData += "<tv source-info-url=\"http://www.schedulesdirect.org/\" source-info-name=\"Schedules Direct\" generator-info-name=\"XMLTV/$Id: tv_grab_na_dd.in,v 1.70 2008/03/03 15:21:41 rmeden Exp $\" generator-info-url=\"http://www.xmltv.org/\">";
             foreach (ListViewItem item in ChannelListView.Items)
             {
                 string ChanName = item.SubItems[0].Text;
@@ -58,25 +69,38 @@ namespace FakeTV
                 string ChanAge = item.SubItems[4].Text;
                 string ChanFilters = item.SubItems[5].Text;
 
+                // add to IP TV m3u
                 iptv_lines.Add("#EXTINF:-1 tvg-id=\"\" tvg-name=\"" + ChanName + "\" tvg-language=\"English\" tvg-logo=\"" + ChanLogo + "\" tvg-country=\"US\" tvg-url=\"\" group-title=\"" + ChanGenre + "\"");
                 iptv_lines.Add("http://127.0.0.1:" + StreamPort);
+
+                // append to XMLTV file
+                XMLTVData += "<channel id=\"" + item.Index.ToString() + "\">" +
+                    "<display-name>" + ChanName + @"</display-name>" +
+                    "<icon src=\"" + ChanLogo + "\" />" +
+                    "</channel>";
                 
+                // start up our VLC streams
                 if (VLCPathBox.Text != "")
                 {
                     Process vlc = new Process();
                     vlc.StartInfo.FileName = VLCPathBox.Text;
+                    string vlcArgs = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
                     if (HideVLC.Checked)
-                        vlc.StartInfo.Arguments = @"playlists/" + ChanName + ".m3u --sout =#http{mux=ts,dst=:" + StreamPort + "/} :no-sout-all :sout-keep -I dummy";
+                        vlcArgs += @"\playlists\" + ChanName + ".m3u --sout=#http{mux=ts,dst=:" + StreamPort + "/} :no-sout-all :sout-keep -I dummy";
                     else
-                        vlc.StartInfo.Arguments = @"playlists/" + ChanName + ".m3u --sout =#http{mux=ts,dst=:" + StreamPort + "/} :no-sout-all :sout-keep";
+                        vlcArgs += @"\playlists\" + ChanName + ".m3u --sout=#http{mux=ts,dst=:" + StreamPort + "/} :no-sout-all :sout-keep";
+                    vlc.StartInfo.Arguments = vlcArgs;
                     vlc.Start();
                 }
                 StreamPort++;
             }
             File.WriteAllLines(@"iptv.m3u", iptv_lines);
 
-            // create XMLTV file
-            // TODO
+            XmlDocument xdoc = new XmlDocument();
+            string XMLInfo = XMLTVData + XMLTVShowData + "</tv>";
+            //File.WriteAllText(@"debug.txt", XMLInfo); // DEBUG
+            xdoc.LoadXml(XMLInfo);
+            xdoc.Save("XMLTV.xml");
 
             StartServerBtn.Text = "STOP FAKE TV STREAMS";
             StartServerBtn.ForeColor = Color.Maroon;
@@ -84,15 +108,12 @@ namespace FakeTV
 
         private void FetchMediaBtn_Click(object sender, EventArgs e)
         {
-            if (!fun.GrabPlexLibrary(PlexIP.Text, PlexPort.Text, PlexToken.Text))
-            {
-                MessageBox.Show("ERROR: No access to Plex's library!");
-            }
+            
         }
 
         private void Form_Load(object sender, EventArgs e)
         {
-            fun.CreateDirs();
+            
         }
 
         private void AddNewChanBtn_Click(object sender, EventArgs e)
@@ -120,9 +141,8 @@ namespace FakeTV
             UpdateChanListView();
         }
 
-        private void GenerateM3UChansBtn_Click(object sender, EventArgs e)
+        public void GenerateM3uChannels()
         {
-            // iterate through channel list view items, generate playlist m3u files
             foreach (ListViewItem item in ChannelListView.Items)
             {
                 string ChanName = item.SubItems[0].Text;
@@ -132,10 +152,7 @@ namespace FakeTV
                 string ChanAge = item.SubItems[4].Text;
                 string ChanFilters = item.SubItems[5].Text;
 
-                // TODO: Apply filters
-                /*if (!item.SubItems[1].Text.Equals("Any")) // Type
-                {
-                }*/
+                DateTime dt = DateTime.Now;
 
                 // parse our media XML files
                 DirectoryInfo d = new DirectoryInfo("categories");
@@ -144,13 +161,52 @@ namespace FakeTV
                 {
                     // get our direct media paths and append to playlist m3u
                     Debug.WriteLine("Parsing XML " + file.FullName);
-                    XDocument coordinates = XDocument.Load(file.FullName);
-                    var items = coordinates.Descendants("Part")
-                       .Select(node => (string)node.Attribute("file").Value.ToString())
-                       .ToList();
-                    File.WriteAllLines(@"playlists/" + ChanName + ".m3u", items);
+                    XmlDocument xmlDoc = new XmlDocument();
+                    xmlDoc.Load(file.FullName);
+                    XmlNodeList nodeList = xmlDoc.DocumentElement.SelectNodes("/MediaContainer/Video");
+                    List<string> VideoFiles = new List<string>();
+                    foreach (XmlNode node in nodeList)
+                    {
+                        bool FoundGenre = false;
+                        bool FoundType = false;
+                        foreach (XmlNode GNode in node.SelectNodes("Genre"))
+                        {
+                            if (GNode.Attributes["tag"].Value.Equals(ChanGenre) || ChanGenre.Equals("Any"))
+                                FoundGenre = true;
+                        }
+                        if (node.Attributes["type"].Value.Equals(ChanType) || ChanType.Equals("Both"))
+                            FoundType = true;
+
+                        if (FoundType && FoundGenre)
+                            VideoFiles.Add(node.SelectSingleNode("Media/Part").Attributes["file"].Value);
+
+                        TimeSpan ts = new TimeSpan(0, 0, Convert.ToInt32(node.Attributes["duration"].Value) / 1000);
+                        DateTime dt2 = DateTime.Now;
+                        dt2 += ts;
+
+                        XMLTVShowData += "<programme start=\"" + String.Format("{0:yyyyMMddHHmmss}", dt) + " -0500\" stop=\"" + String.Format("{0:yyyyMMddHHmmss}", dt2) + " -0500\" channel=\"" + item.Index.ToString() + "\">" +
+                            "<title lang=\"en\">" + WebUtility.HtmlEncode(node.Attributes["title"].Value) + "</title>" +
+                            "<desc lang=\"en\">" + WebUtility.HtmlEncode(node.Attributes["summary"].Value) + "</desc>" +
+                            "<date>" + String.Format("{0:yyyyMMdd}", dt) + "</date>" +
+                            "<category lang=\"en\">" + ChanName + "</category>" +
+                            "<audio>" +
+                            "<stereo>stereo</stereo>" +
+                            "</audio>" +
+                            "<previously-shown start = \"\" />" +
+                            "<subtitles type = \"teletext\" />" +
+                            "</programme>";
+
+                        dt += ts;
+                    }
+                    File.WriteAllLines(@"playlists/" + ChanName + ".m3u", VideoFiles);
                 }
             }
+        }
+
+        private void GenerateM3UChansBtn_Click(object sender, EventArgs e)
+        {
+            // iterate through channel list view items, generate playlist m3u files
+            
         }
 
         private void FakeTV_Shown(object sender, EventArgs e)
@@ -173,6 +229,38 @@ namespace FakeTV
             Properties.Settings.Default.StartPort = StartingPortBox.Text;
             Properties.Settings.Default.VLCexe = VLCPathBox.Text;
             Properties.Settings.Default.Save();
+        }
+
+        private void VisitPlex_Click(object sender, EventArgs e)
+        {
+            Process.Start("http://" + PlexIP.Text + ":" + PlexPort.Text);
+        }
+
+        private void HowToBtn_Click(object sender, EventArgs e)
+        {
+            using (Form form = new Form())
+            {
+                var img = new Bitmap(Properties.Resources.guide);
+
+                form.StartPosition = FormStartPosition.CenterScreen;
+                form.Size = new Size(img.Size.Width + 15, img.Size.Height + 40);
+
+                PictureBox pb = new PictureBox();
+                pb.Dock = DockStyle.Fill;
+                pb.Image = img;
+
+                form.Controls.Add(pb);
+                form.ShowDialog();
+            }
+        }
+
+        private void DeleteChanBtn_Click(object sender, EventArgs e)
+        {
+            if (File.Exists(@"channels/" + ChannelListView.SelectedItems[0].SubItems[0].Text + ".cfg"))
+            {
+                File.Delete(@"channels/" + ChannelListView.SelectedItems[0].SubItems[0].Text + ".cfg");
+            }
+            UpdateChanListView();
         }
     }
 }

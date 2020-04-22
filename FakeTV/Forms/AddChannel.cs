@@ -18,17 +18,6 @@ namespace FakeTV
             InitializeComponent();
         }
 
-        private void GetChanIconBtn_Click(object sender, EventArgs e)
-        {
-            DialogResult result = ChanIconBrowse.ShowDialog();
-            Directory.CreateDirectory("logos");
-            if (result == DialogResult.OK)
-            {
-                ChanIconBox.ImageLocation = ChanIconBrowse.FileName;
-                System.IO.File.Copy(ChanIconBrowse.FileName, "logos/" + ChanIconBrowse.FileName, true);
-            }
-        }
-
         private void AddChannel_Load(object sender, EventArgs e)
         {
             
@@ -43,9 +32,15 @@ namespace FakeTV
 
         private void SaveAndClose_Click(object sender, EventArgs e)
         {
-            System.IO.Directory.CreateDirectory("channels");
-            string[] lines = { ChanIconBrowse.FileName, TypeBox.Text, GenreBox.Text, NewOldBox.Text, FiltersBox.Text };
-            System.IO.File.WriteAllLines(@"channels/" + ChanNameBox.Text + ".cfg", lines);
+            if (ChanLogoBox.Text == "" || ChanNameBox.Text == "")
+            {
+                MessageBox.Show("ERROR: Channel Logo and Name are required.");
+                return;
+            }
+            Directory.CreateDirectory("channels");
+            string exePath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+            string[] lines = { ChanLogoBox.Text, TypeBox.Text, GenreBox.Text, NewOldBox.Text, FiltersBox.Text };
+            File.WriteAllLines(@"channels/" + ChanNameBox.Text + ".cfg", lines);
             Close();
         }
     }

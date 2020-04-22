@@ -38,23 +38,23 @@
             this.label3 = new System.Windows.Forms.Label();
             this.BrowseVLCExe = new System.Windows.Forms.Button();
             this.GetVLCDialog = new System.Windows.Forms.OpenFileDialog();
-            this.FetchMediaBtn = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.StartingPortBox = new System.Windows.Forms.TextBox();
             this.HideVLC = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.GenerateM3UChansBtn = new System.Windows.Forms.Button();
             this.DeleteChanBtn = new System.Windows.Forms.Button();
             this.AddNewChanBtn = new System.Windows.Forms.Button();
             this.ChannelListView = new System.Windows.Forms.ListView();
             this.ChanName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Logo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Type = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Genre = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.NewOrOld = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Filters = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.CheckChannelsDirWatcher = new System.IO.FileSystemWatcher();
-            this.Logo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.StartingPortBox = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.VisitPlex = new System.Windows.Forms.Button();
+            this.HowToBtn = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CheckChannelsDirWatcher)).BeginInit();
@@ -66,14 +66,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.PlexIP.Location = new System.Drawing.Point(70, 17);
             this.PlexIP.Name = "PlexIP";
-            this.PlexIP.Size = new System.Drawing.Size(368, 20);
+            this.PlexIP.Size = new System.Drawing.Size(299, 20);
             this.PlexIP.TabIndex = 0;
             this.PlexIP.Text = "127.0.0.1";
             // 
             // PlexPort
             // 
             this.PlexPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.PlexPort.Location = new System.Drawing.Point(444, 17);
+            this.PlexPort.Location = new System.Drawing.Point(373, 17);
             this.PlexPort.Name = "PlexPort";
             this.PlexPort.Size = new System.Drawing.Size(65, 20);
             this.PlexPort.TabIndex = 1;
@@ -85,7 +85,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.PlexToken.Location = new System.Drawing.Point(70, 44);
             this.PlexToken.Name = "PlexToken";
-            this.PlexToken.Size = new System.Drawing.Size(439, 20);
+            this.PlexToken.Size = new System.Drawing.Size(368, 20);
             this.PlexToken.TabIndex = 2;
             // 
             // label1
@@ -154,28 +154,17 @@
             this.GetVLCDialog.Filter = "VLC exe File (*.exe) | *.exe";
             this.GetVLCDialog.InitialDirectory = "C:/";
             // 
-            // FetchMediaBtn
-            // 
-            this.FetchMediaBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.FetchMediaBtn.ForeColor = System.Drawing.Color.Maroon;
-            this.FetchMediaBtn.Location = new System.Drawing.Point(386, 96);
-            this.FetchMediaBtn.Name = "FetchMediaBtn";
-            this.FetchMediaBtn.Size = new System.Drawing.Size(123, 23);
-            this.FetchMediaBtn.TabIndex = 9;
-            this.FetchMediaBtn.Text = "Fetch Media [BETA]";
-            this.FetchMediaBtn.UseVisualStyleBackColor = true;
-            this.FetchMediaBtn.Click += new System.EventHandler(this.FetchMediaBtn_Click);
-            // 
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.HowToBtn);
+            this.groupBox1.Controls.Add(this.VisitPlex);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.StartingPortBox);
             this.groupBox1.Controls.Add(this.HideVLC);
             this.groupBox1.Controls.Add(this.BrowseVLCExe);
             this.groupBox1.Controls.Add(this.PlexIP);
-            this.groupBox1.Controls.Add(this.FetchMediaBtn);
             this.groupBox1.Controls.Add(this.PlexPort);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.PlexToken);
@@ -189,10 +178,28 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Settings";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(1, 101);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(87, 13);
+            this.label4.TabIndex = 12;
+            this.label4.Text = "Stream Start Port";
+            // 
+            // StartingPortBox
+            // 
+            this.StartingPortBox.Location = new System.Drawing.Point(94, 98);
+            this.StartingPortBox.Name = "StartingPortBox";
+            this.StartingPortBox.Size = new System.Drawing.Size(57, 20);
+            this.StartingPortBox.TabIndex = 11;
+            this.StartingPortBox.Text = "8080";
+            // 
             // HideVLC
             // 
+            this.HideVLC.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.HideVLC.AutoSize = true;
-            this.HideVLC.Location = new System.Drawing.Point(298, 100);
+            this.HideVLC.Location = new System.Drawing.Point(438, 98);
             this.HideVLC.Name = "HideVLC";
             this.HideVLC.Size = new System.Drawing.Size(71, 17);
             this.HideVLC.TabIndex = 10;
@@ -204,7 +211,6 @@
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.GenerateM3UChansBtn);
             this.groupBox2.Controls.Add(this.DeleteChanBtn);
             this.groupBox2.Controls.Add(this.AddNewChanBtn);
             this.groupBox2.Controls.Add(this.ChannelListView);
@@ -215,27 +221,17 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Channels";
             // 
-            // GenerateM3UChansBtn
-            // 
-            this.GenerateM3UChansBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.GenerateM3UChansBtn.ForeColor = System.Drawing.Color.Maroon;
-            this.GenerateM3UChansBtn.Location = new System.Drawing.Point(116, 207);
-            this.GenerateM3UChansBtn.Name = "GenerateM3UChansBtn";
-            this.GenerateM3UChansBtn.Size = new System.Drawing.Size(283, 23);
-            this.GenerateM3UChansBtn.TabIndex = 3;
-            this.GenerateM3UChansBtn.Text = "Generate Playlist M3U\'s and Channels M3U [BETA]";
-            this.GenerateM3UChansBtn.UseVisualStyleBackColor = true;
-            this.GenerateM3UChansBtn.Click += new System.EventHandler(this.GenerateM3UChansBtn_Click);
-            // 
             // DeleteChanBtn
             // 
             this.DeleteChanBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.DeleteChanBtn.ForeColor = System.Drawing.Color.Red;
             this.DeleteChanBtn.Location = new System.Drawing.Point(6, 207);
             this.DeleteChanBtn.Name = "DeleteChanBtn";
             this.DeleteChanBtn.Size = new System.Drawing.Size(104, 23);
             this.DeleteChanBtn.TabIndex = 2;
             this.DeleteChanBtn.Text = "Delete Channel";
             this.DeleteChanBtn.UseVisualStyleBackColor = true;
+            this.DeleteChanBtn.Click += new System.EventHandler(this.DeleteChanBtn_Click);
             // 
             // AddNewChanBtn
             // 
@@ -275,6 +271,10 @@
             this.ChanName.Text = "Name";
             this.ChanName.Width = 89;
             // 
+            // Logo
+            // 
+            this.Logo.Text = "Logo";
+            // 
             // Type
             // 
             this.Type.Text = "Type";
@@ -304,28 +304,27 @@
             this.CheckChannelsDirWatcher.SynchronizingObject = this;
             this.CheckChannelsDirWatcher.Changed += new System.IO.FileSystemEventHandler(this.CheckChannelsDirWatcher_Changed);
             // 
-            // Logo
+            // VisitPlex
             // 
-            this.Logo.Text = "Logo";
+            this.VisitPlex.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.VisitPlex.Location = new System.Drawing.Point(442, 16);
+            this.VisitPlex.Name = "VisitPlex";
+            this.VisitPlex.Size = new System.Drawing.Size(67, 23);
+            this.VisitPlex.TabIndex = 13;
+            this.VisitPlex.Text = "Visit Plex";
+            this.VisitPlex.UseVisualStyleBackColor = true;
+            this.VisitPlex.Click += new System.EventHandler(this.VisitPlex_Click);
             // 
-            // StartingPortBox
+            // HowToBtn
             // 
-            this.StartingPortBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.StartingPortBox.Location = new System.Drawing.Point(94, 95);
-            this.StartingPortBox.Name = "StartingPortBox";
-            this.StartingPortBox.Size = new System.Drawing.Size(100, 20);
-            this.StartingPortBox.TabIndex = 11;
-            this.StartingPortBox.Text = "8080";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(1, 98);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(87, 13);
-            this.label4.TabIndex = 12;
-            this.label4.Text = "Stream Start Port";
+            this.HowToBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.HowToBtn.Location = new System.Drawing.Point(442, 42);
+            this.HowToBtn.Name = "HowToBtn";
+            this.HowToBtn.Size = new System.Drawing.Size(67, 23);
+            this.HowToBtn.TabIndex = 14;
+            this.HowToBtn.Text = "How To";
+            this.HowToBtn.UseVisualStyleBackColor = true;
+            this.HowToBtn.Click += new System.EventHandler(this.HowToBtn_Click);
             // 
             // FakeTV
             // 
@@ -335,6 +334,7 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.StartServerBtn);
+            this.MinimumSize = new System.Drawing.Size(550, 456);
             this.Name = "FakeTV";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -362,7 +362,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button BrowseVLCExe;
         private System.Windows.Forms.OpenFileDialog GetVLCDialog;
-        private System.Windows.Forms.Button FetchMediaBtn;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ListView ChannelListView;
@@ -375,10 +374,11 @@
         private System.IO.FileSystemWatcher CheckChannelsDirWatcher;
         private System.Windows.Forms.ColumnHeader Filters;
         private System.Windows.Forms.CheckBox HideVLC;
-        private System.Windows.Forms.Button GenerateM3UChansBtn;
         private System.Windows.Forms.ColumnHeader Logo;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox StartingPortBox;
+        private System.Windows.Forms.Button VisitPlex;
+        private System.Windows.Forms.Button HowToBtn;
     }
 }
 
