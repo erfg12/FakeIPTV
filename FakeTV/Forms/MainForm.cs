@@ -202,7 +202,16 @@ namespace FakeTV
 
                         if (FoundType && FoundGenre && (!ChanFilters.Equals("") && FilterFound))
                         {
-                            string VideoPath = node.SelectSingleNode("Media/Part").Attributes["file"].Value;
+                            string VideoPath = "";
+                            if (node.Attributes["type"].Value.Equals("show") && ChanType.Equals("show"))
+                            {
+                                // parse through XML differently
+
+                            }
+                            else
+                            {
+                                VideoPath = node.SelectSingleNode("Media/Part").Attributes["file"].Value;
+                            }
                             VideoFiles.Add(VideoPath);
                             Durations[VideoPath] = Convert.ToInt32(node.Attributes["duration"].Value);
                             Titles[VideoPath] = WebUtility.HtmlEncode(node.Attributes["title"].Value);
