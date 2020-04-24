@@ -54,6 +54,7 @@ namespace FakeTV
                 //File.Delete("iptv.m3u");
                 XMLTVData = "";
                 XMLVideoData.Clear();
+                XMLInfo = "";
                 return;
             }
 
@@ -90,10 +91,11 @@ namespace FakeTV
                     Process vlc = new Process();
                     vlc.StartInfo.FileName = VLCPathBox.Text;
                     string vlcArgs = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+                    // sometimes this plays out of order?
                     if (HideVLC.Checked)
-                        vlcArgs += @"\playlists\" + ChanName + ".m3u --sout=#http{mux=ts,dst=:" + StreamPort + "/} :no-sout-all :sout-keep -I dummy";
+                        vlcArgs += @"\playlists\" + ChanName + ".m3u --sout=#http{mux=ts,dst=:" + StreamPort + "/} -I dummy";
                     else
-                        vlcArgs += @"\playlists\" + ChanName + ".m3u --sout=#http{mux=ts,dst=:" + StreamPort + "/} :no-sout-all :sout-keep";
+                        vlcArgs += @"\playlists\" + ChanName + ".m3u --sout=#http{mux=ts,dst=:" + StreamPort + "/}";
                     vlc.StartInfo.Arguments = vlcArgs;
                     vlc.Start();
                 }
