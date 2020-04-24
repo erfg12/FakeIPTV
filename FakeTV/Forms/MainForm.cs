@@ -27,6 +27,7 @@ namespace FakeTV
         Functions fun = new Functions();
         string XMLTVData = "";
         Dictionary<string,string> XMLVideoData = new Dictionary<string,string>();
+        string XMLInfo = "";
 
         private void BrowseVLCExe_Click(object sender, EventArgs e)
         {
@@ -43,8 +44,6 @@ namespace FakeTV
             {
                 MessageBox.Show("ERROR: No access to Plex's library!");
             }
-
-            GenerateM3uChannels();
 
             if (StartServerBtn.Text.Equals("STOP FAKE TV STREAMS"))
             {
@@ -103,11 +102,10 @@ namespace FakeTV
             File.WriteAllLines(@"iptv.m3u", iptv_lines);
 
             XmlDocument xdoc = new XmlDocument();
-            string XMLInfo = XMLTVData;
-            foreach(KeyValuePair<string, string> kvp in XMLVideoData) {
-                XMLInfo += kvp.Value;
-            }
-            XMLInfo += "</tv>";
+            XMLInfo += XMLTVData;
+
+            GenerateM3uChannels();
+
             //File.WriteAllText(@"debug.txt", XMLInfo); // DEBUG
             xdoc.LoadXml(XMLInfo);
             xdoc.Save("XMLTV.xml");
@@ -307,12 +305,13 @@ namespace FakeTV
                     dt += ts;
                 }
                 File.WriteAllLines(@"playlists/" + ChanName + ".m3u", XMLVideoData.Keys);
-                VideoFiles.Clear();
-                Titles.Clear();
-                Summaries.Clear();
-                Durations.Clear();
+                foreach (KeyValuePair<string, string> kvp in XMLVideoData)
+                {
+                    XMLInfo += kvp.Value;
+                }
                 XMLVideoData.Clear();
             }
+            XMLInfo += "</tv>";
         }
 
         private void GenerateM3UChansBtn_Click(object sender, EventArgs e)
