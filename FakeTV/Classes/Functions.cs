@@ -33,6 +33,8 @@ namespace FakeTV
             Directory.CreateDirectory("channels");
             Directory.CreateDirectory("playlists");
             Directory.CreateDirectory("logos");
+            Directory.CreateDirectory("shows");
+            Directory.CreateDirectory("seasons");
         }
 
         public bool GrabPlexLibrary(string PlexIP, string PlexPort, string PlexToken)

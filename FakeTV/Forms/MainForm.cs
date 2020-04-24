@@ -179,6 +179,8 @@ namespace FakeTV
                     Debug.WriteLine("Parsing XML " + file.FullName);
                     XmlDocument xmlDoc = new XmlDocument();
                     xmlDoc.Load(file.FullName);
+
+                    // MOVIES
                     XmlNodeList nodeList = xmlDoc.DocumentElement.SelectNodes("/MediaContainer/Video");
                     foreach (XmlNode node in nodeList)
                     {
@@ -190,7 +192,7 @@ namespace FakeTV
                             if (GNode.Attributes["tag"].Value.Equals(ChanGenre) || ChanGenre.Equals("Any"))
                                 FoundGenre = true;
                         }
-                        if (node.Attributes["type"].Value.Equals(ChanType) || ChanType.Equals("Both"))
+                        if (node.Attributes["type"].Value.Equals(ChanType) || ChanType.Equals("Both") || ChanType.Equals("movie"))
                             FoundType = true;
 
                         if (!ChanFilters.Equals(""))
@@ -200,22 +202,91 @@ namespace FakeTV
                                 FilterFound = true;
                         }
 
-                        if (FoundType && FoundGenre && (!ChanFilters.Equals("") && FilterFound))
+                        if (FoundType && FoundGenre)
                         {
-                            string VideoPath = "";
-                            if (node.Attributes["type"].Value.Equals("show") && ChanType.Equals("show"))
-                            {
-                                // parse through XML differently
+                            if (!ChanFilters.Equals("") && !FilterFound)
+                                continue;
 
-                            }
-                            else
-                            {
-                                VideoPath = node.SelectSingleNode("Media/Part").Attributes["file"].Value;
-                            }
+                            string VideoPath = "";
+                            VideoPath = node.SelectSingleNode("Media/Part").Attributes["file"].Value;
                             VideoFiles.Add(VideoPath);
                             Durations[VideoPath] = Convert.ToInt32(node.Attributes["duration"].Value);
                             Titles[VideoPath] = WebUtility.HtmlEncode(node.Attributes["title"].Value);
                             Summaries[VideoPath] = WebUtility.HtmlEncode(node.Attributes["title"].Value);
+                        }
+                    }
+
+                    // SHOWS
+                    nodeList = xmlDoc.DocumentElement.SelectNodes("/MediaContainer/Directory");
+                    foreach (XmlNode node in nodeList)
+                    {
+                        bool FoundGenre = false;
+                        bool FoundType = false;
+                        bool FilterFound = false;
+                        foreach (XmlNode GNode in node.SelectNodes("Genre"))
+                        {
+                            if (GNode.Attributes["tag"].Value.Equals(ChanGenre) || ChanGenre.Equals("Any"))
+                                FoundGenre = true;
+                        }
+                        if (node.Attributes["type"].Value.Equals(ChanType) || ChanType.Equals("Both") || ChanType.Equals("show"))
+                            FoundType = true;
+
+                        if (!ChanFilters.Equals(""))
+                        {
+                            Regex rx = new Regex(ChanFilters, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                            if (rx.Match(WebUtility.HtmlEncode(node.Attributes["title"].Value)).Success)
+                                FilterFound = true;
+                        }
+
+                        if (FoundType && FoundGenre)
+                        {
+                            if (!ChanFilters.Equals("") && !FilterFound)
+                                continue;
+
+                            string VideoPath = "";
+                            if (node.Attributes["type"].Value.Equals("show"))
+                            {
+                                // parse through XML differently
+                                string showDir = node.Attributes["key"].Value;
+                                var url = "http://" + PlexIP.Text + ":" + PlexPort.Text + showDir + "?X-Plex-Token=" + PlexToken.Text;
+                                if (fun.CheckURLExists(url))
+                                {
+                                    using (var client = new WebClient())
+                                    {
+                                        string ShowPath = "shows/" + Regex.Match(showDir, @"\d+").Value + ".xml";
+                                        client.DownloadFile(url, ShowPath);
+                                        // we have to parse the shows for each season directory on the spot
+                                        XmlDocument xmlDoc2 = new XmlDocument();
+                                        xmlDoc2.Load(ShowPath);
+                                        XmlNodeList nodeList2 = xmlDoc2.DocumentElement.SelectNodes("/MediaContainer/Directory");
+                                        foreach (XmlNode node2 in nodeList2)
+                                        {
+                                            string seasonDir = node2.Attributes["key"].Value;
+                                            var url2 = "http://" + PlexIP.Text + ":" + PlexPort.Text + seasonDir + "?X-Plex-Token=" + PlexToken.Text;
+                                            if (fun.CheckURLExists(url2))
+                                            {
+                                                string ShowDirNum = Regex.Match(showDir, @"\d+").Value;
+                                                string SeasonDirNum = Regex.Match(seasonDir, @"\d+").Value;
+                                                if (ShowDirNum.Equals(SeasonDirNum))
+                                                    continue;
+                                                string SeasonPath = "seasons/" + ShowDirNum + "-" + SeasonDirNum + ".xml";
+                                                client.DownloadFile(url2, SeasonPath);
+                                                XmlDocument xmlDoc3 = new XmlDocument();
+                                                xmlDoc3.Load(SeasonPath);
+                                                XmlNodeList nodeList3 = xmlDoc3.DocumentElement.SelectNodes("/MediaContainer/Video");
+                                                foreach (XmlNode node3 in nodeList3)
+                                                {
+                                                    VideoPath = node3.SelectSingleNode("Media/Part").Attributes["file"].Value;
+                                                    VideoFiles.Add(VideoPath);
+                                                    Durations[VideoPath] = Convert.ToInt32(node3.Attributes["duration"].Value);
+                                                    Titles[VideoPath] = WebUtility.HtmlEncode(node3.Attributes["title"].Value);
+                                                    Summaries[VideoPath] = WebUtility.HtmlEncode(node3.Attributes["title"].Value);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -236,6 +307,11 @@ namespace FakeTV
                     dt += ts;
                 }
                 File.WriteAllLines(@"playlists/" + ChanName + ".m3u", XMLVideoData.Keys);
+                VideoFiles.Clear();
+                Titles.Clear();
+                Summaries.Clear();
+                Durations.Clear();
+                XMLVideoData.Clear();
             }
         }
 
