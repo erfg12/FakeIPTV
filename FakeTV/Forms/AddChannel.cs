@@ -13,21 +13,37 @@ namespace FakeTV
 {
     public partial class AddChannel : Form
     {
-        public AddChannel()
+        string cfgPath = "";
+        public AddChannel(string ConfigPath = "")
         {
             InitializeComponent();
+            cfgPath = ConfigPath;
         }
 
         private void AddChannel_Load(object sender, EventArgs e)
         {
-            
+
         }
 
         private void AddChannel_Shown(object sender, EventArgs e)
         {
-            GenreBox.SelectedIndex = 0;
-            TypeBox.SelectedIndex = 0;
-            NewOldBox.SelectedIndex = 0;
+            if (cfgPath.Equals(""))
+            {
+                GenreBox.SelectedIndex = 0;
+                TypeBox.SelectedIndex = 0;
+                NewOldBox.SelectedIndex = 0;
+            } 
+            else
+            {
+                this.Name = "Edit Existing Channel";
+                string[] vars = File.ReadAllLines(cfgPath);
+                ChanLogoBox.Text = vars[0];
+                TypeBox.Text = vars[1];
+                GenreBox.Text = vars[2];
+                NewOldBox.Text = vars[3];
+                FiltersBox.Text = vars[4];
+                ChanNameBox.Text = Path.GetFileNameWithoutExtension(cfgPath);
+            }
         }
 
         private void SaveAndClose_Click(object sender, EventArgs e)

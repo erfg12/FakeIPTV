@@ -45,6 +45,8 @@
             this.StartingPortBox = new System.Windows.Forms.TextBox();
             this.HideVLC = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.MoveDownBtn = new System.Windows.Forms.Button();
+            this.MoveUpBtn = new System.Windows.Forms.Button();
             this.DeleteChanBtn = new System.Windows.Forms.Button();
             this.AddNewChanBtn = new System.Windows.Forms.Button();
             this.ChannelListView = new System.Windows.Forms.ListView();
@@ -55,6 +57,7 @@
             this.NewOrOld = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Filters = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.CheckChannelsDirWatcher = new System.IO.FileSystemWatcher();
+            this.EditChanBtn = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CheckChannelsDirWatcher)).BeginInit();
@@ -233,6 +236,9 @@
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.EditChanBtn);
+            this.groupBox2.Controls.Add(this.MoveDownBtn);
+            this.groupBox2.Controls.Add(this.MoveUpBtn);
             this.groupBox2.Controls.Add(this.DeleteChanBtn);
             this.groupBox2.Controls.Add(this.AddNewChanBtn);
             this.groupBox2.Controls.Add(this.ChannelListView);
@@ -242,6 +248,26 @@
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Channels";
+            // 
+            // MoveDownBtn
+            // 
+            this.MoveDownBtn.Location = new System.Drawing.Point(489, 113);
+            this.MoveDownBtn.Name = "MoveDownBtn";
+            this.MoveDownBtn.Size = new System.Drawing.Size(19, 87);
+            this.MoveDownBtn.TabIndex = 4;
+            this.MoveDownBtn.Text = "v";
+            this.MoveDownBtn.UseVisualStyleBackColor = true;
+            this.MoveDownBtn.Click += new System.EventHandler(this.MoveDownBtn_Click);
+            // 
+            // MoveUpBtn
+            // 
+            this.MoveUpBtn.Location = new System.Drawing.Point(489, 20);
+            this.MoveUpBtn.Name = "MoveUpBtn";
+            this.MoveUpBtn.Size = new System.Drawing.Size(19, 87);
+            this.MoveUpBtn.TabIndex = 3;
+            this.MoveUpBtn.Text = "^";
+            this.MoveUpBtn.UseVisualStyleBackColor = true;
+            this.MoveUpBtn.Click += new System.EventHandler(this.MoveUpBtn_Click);
             // 
             // DeleteChanBtn
             // 
@@ -283,7 +309,7 @@
             this.ChannelListView.HideSelection = false;
             this.ChannelListView.Location = new System.Drawing.Point(7, 20);
             this.ChannelListView.Name = "ChannelListView";
-            this.ChannelListView.Size = new System.Drawing.Size(502, 181);
+            this.ChannelListView.Size = new System.Drawing.Size(476, 181);
             this.ChannelListView.TabIndex = 0;
             this.ChannelListView.UseCompatibleStateImageBehavior = false;
             this.ChannelListView.View = System.Windows.Forms.View.Details;
@@ -309,8 +335,8 @@
             // 
             // NewOrOld
             // 
-            this.NewOrOld.Text = "New/Old";
-            this.NewOrOld.Width = 63;
+            this.NewOrOld.Text = "New/Old (N/A)";
+            this.NewOrOld.Width = 93;
             // 
             // Filters
             // 
@@ -325,6 +351,18 @@
             this.CheckChannelsDirWatcher.Path = "channels";
             this.CheckChannelsDirWatcher.SynchronizingObject = this;
             this.CheckChannelsDirWatcher.Changed += new System.IO.FileSystemEventHandler(this.CheckChannelsDirWatcher_Changed);
+            // 
+            // EditChanBtn
+            // 
+            this.EditChanBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.EditChanBtn.ForeColor = System.Drawing.Color.MidnightBlue;
+            this.EditChanBtn.Location = new System.Drawing.Point(116, 207);
+            this.EditChanBtn.Name = "EditChanBtn";
+            this.EditChanBtn.Size = new System.Drawing.Size(104, 23);
+            this.EditChanBtn.TabIndex = 5;
+            this.EditChanBtn.Text = "Edit Channel";
+            this.EditChanBtn.UseVisualStyleBackColor = true;
+            this.EditChanBtn.Click += new System.EventHandler(this.EditChanBtn_Click);
             // 
             // FakeTV
             // 
@@ -379,6 +417,9 @@
         private System.Windows.Forms.TextBox StartingPortBox;
         private System.Windows.Forms.Button VisitPlex;
         private System.Windows.Forms.Button HowToBtn;
+        private System.Windows.Forms.Button MoveDownBtn;
+        private System.Windows.Forms.Button MoveUpBtn;
+        private System.Windows.Forms.Button EditChanBtn;
     }
 }
 

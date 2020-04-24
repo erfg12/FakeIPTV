@@ -368,11 +368,63 @@ namespace FakeTV
 
         private void DeleteChanBtn_Click(object sender, EventArgs e)
         {
+            if (ChannelListView.SelectedItems.Count <= 0)
+            {
+                MessageBox.Show("ERROR: Select a channel first.");
+                return;
+            }
             if (File.Exists(@"channels/" + ChannelListView.SelectedItems[0].SubItems[0].Text + ".cfg"))
             {
                 File.Delete(@"channels/" + ChannelListView.SelectedItems[0].SubItems[0].Text + ".cfg");
             }
             UpdateChanListView();
+        }
+
+        private void MoveUpBtn_Click(object sender, EventArgs e)
+        {
+            if (ChannelListView.SelectedItems.Count <= 0)
+            {
+                MessageBox.Show("ERROR: Select a channel first.");
+                return;
+            }
+            foreach (ListViewItem lvi in ChannelListView.SelectedItems)
+            {
+                if (lvi.Index > 0)
+                {
+                    int index = lvi.Index - 1;
+                    ChannelListView.Items.RemoveAt(lvi.Index);
+                    ChannelListView.Items.Insert(index, lvi);
+                }
+            }
+        }
+
+        private void MoveDownBtn_Click(object sender, EventArgs e)
+        {
+            if (ChannelListView.SelectedItems.Count <= 0)
+            {
+                MessageBox.Show("ERROR: Select a channel first.");
+                return;
+            }
+            foreach (ListViewItem lvi in ChannelListView.SelectedItems)
+            {
+                if (lvi.Index < ChannelListView.Items.Count)
+                {
+                    int index = lvi.Index + 1;
+                    ChannelListView.Items.RemoveAt(lvi.Index);
+                    ChannelListView.Items.Insert(index, lvi);
+                }
+            }
+        }
+
+        private void EditChanBtn_Click(object sender, EventArgs e)
+        {
+            if (ChannelListView.SelectedItems.Count <= 0)
+            {
+                MessageBox.Show("ERROR: Select a channel first.");
+                return;
+            }
+            AddChannel AddChan = new AddChannel(@"channels/" + ChannelListView.SelectedItems[0].SubItems[0].Text + ".cfg");
+            AddChan.Show();
         }
     }
 }

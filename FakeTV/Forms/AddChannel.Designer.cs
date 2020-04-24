@@ -66,9 +66,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(15, 168);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(73, 13);
+            this.label2.Size = new System.Drawing.Size(164, 13);
             this.label2.TabIndex = 3;
-            this.label2.Text = "Channel Logo";
+            this.label2.Text = "Channel Logo (URL to .PNG file):";
             // 
             // label3
             // 
@@ -85,29 +85,29 @@
             this.GenreBox.FormattingEnabled = true;
             this.GenreBox.Items.AddRange(new object[] {
             "Any",
-            "Action ",
-            "Adventure ",
-            "Animation ",
-            "Biography ",
-            "Comedy ",
-            "Crime ",
-            "Documentary ",
-            "Drama ",
-            "Family ",
-            "Fantasy ",
-            "Film Noir ",
-            "History ",
-            "Horror ",
-            "Music ",
-            "Musical ",
-            "Mystery ",
-            "Romance ",
-            "Sci-Fi ",
-            "Short Film ",
-            "Sport ",
-            "Superhero ",
-            "Thriller ",
-            "War ",
+            "Action",
+            "Adventure",
+            "Animation",
+            "Biography",
+            "Comedy",
+            "Crime",
+            "Documentary",
+            "Drama",
+            "Family",
+            "Fantasy",
+            "Film Noir",
+            "History",
+            "Horror",
+            "Music",
+            "Musical",
+            "Mystery",
+            "Romance",
+            "Sci-Fi",
+            "Short Film",
+            "Sport",
+            "Superhero",
+            "Thriller",
+            "War",
             "Western"});
             this.GenreBox.Location = new System.Drawing.Point(18, 64);
             this.GenreBox.Name = "GenreBox";
@@ -132,9 +132,9 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(125, 88);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(56, 13);
+            this.label4.Size = new System.Drawing.Size(128, 13);
             this.label4.TabIndex = 8;
-            this.label4.Text = "New / Old";
+            this.label4.Text = "New / Old (currently N/A)";
             // 
             // TypeBox
             // 
@@ -185,9 +185,9 @@
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(15, 131);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(34, 13);
+            this.label6.Size = new System.Drawing.Size(172, 13);
             this.label6.TabIndex = 14;
-            this.label6.Text = "Filters";
+            this.label6.Text = "Movie/TVShow Title Regex Filters:";
             // 
             // ChanLogoBox
             // 
