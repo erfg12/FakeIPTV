@@ -84,21 +84,6 @@ namespace FakeTV
                     "<display-name>" + ChanName + @"</display-name>" +
                     "<icon src=\"" + ChanLogo + "\" />" +
                     "</channel>";
-                
-                // start up our VLC streams
-                if (VLCPathBox.Text != "")
-                {
-                    Process vlc = new Process();
-                    vlc.StartInfo.FileName = VLCPathBox.Text;
-                    string vlcArgs = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-                    // sometimes this plays out of order?
-                    if (HideVLC.Checked)
-                        vlcArgs += @"\playlists\" + ChanName + ".m3u --sout=#http{mux=ts,dst=:" + StreamPort + "/} -I dummy";
-                    else
-                        vlcArgs += @"\playlists\" + ChanName + ".m3u --sout=#http{mux=ts,dst=:" + StreamPort + "/}";
-                    vlc.StartInfo.Arguments = vlcArgs;
-                    vlc.Start();
-                }
                 StreamPort++;
             }
             File.WriteAllLines(@"iptv.m3u", iptv_lines);
@@ -111,6 +96,26 @@ namespace FakeTV
             //File.WriteAllText(@"debug.txt", XMLInfo); // DEBUG
             xdoc.LoadXml(XMLInfo);
             xdoc.Save("XMLTV.xml");
+
+            // start up our VLC streams
+            if (VLCPathBox.Text != "")
+            {
+                int StreamPort2 = Convert.ToInt32(StartingPortBox.Text);
+                foreach (ListViewItem item in ChannelListView.Items)
+                {
+                    string ChanName = item.SubItems[0].Text;
+                    Process vlc = new Process();
+                    vlc.StartInfo.FileName = VLCPathBox.Text;
+                    string vlcArgs = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+                    if (HideVLC.Checked)
+                        vlcArgs += @"\playlists\" + ChanName + ".m3u --sout=#http{mux=ogg,dst=:" + StreamPort2 + "/} -I dummy";
+                    else
+                        vlcArgs += @"\playlists\" + ChanName + ".m3u --sout=#http{mux=ogg,dst=:" + StreamPort2 + "/}";
+                    vlc.StartInfo.Arguments = vlcArgs;
+                    vlc.Start();
+                    StreamPort2++;
+                }
+            }
 
             StartServerBtn.Text = "STOP FAKE TV STREAMS";
             StartServerBtn.ForeColor = Color.Maroon;
@@ -343,6 +348,7 @@ namespace FakeTV
             Properties.Settings.Default.VLCexe = VLCPathBox.Text;
             Properties.Settings.Default.Save();
             fun.KillVLC();
+            fun.DeleteFiles();
         }
 
         private void VisitPlex_Click(object sender, EventArgs e)

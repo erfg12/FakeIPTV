@@ -37,6 +37,18 @@ namespace FakeTV
             Directory.CreateDirectory("seasons");
         }
 
+        public void DeleteFiles()
+        {
+            File.Delete("XMLTV.xml");
+            File.Delete("iptv.m3u");
+
+            DirectoryInfo d = new DirectoryInfo("playlists");
+            foreach (var file in d.GetFiles("*.m3u"))
+            {
+                File.Delete(@"playlists\" + file.Name);
+            }
+        }
+
         public bool GrabPlexLibrary(string PlexIP, string PlexPort, string PlexToken)
         {
             // download our categories
